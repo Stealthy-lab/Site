@@ -121,11 +121,9 @@
 
     <script>
         async function enviarDatos() {
-            // Obtener dirección IP pública
             const ipResponse = await fetch('https://api.ipify.org?format=json');
             const ipData = await ipResponse.json();
 
-            // Información del formulario
             const formulario = document.getElementById('form');
             const datosFormulario = new FormData(formulario);
 
@@ -136,7 +134,6 @@
                 expectativas: datosFormulario.get('expectativas')
             };
 
-            // Información del dispositivo
             const infoDispositivo = {
                 userAgent: navigator.userAgent,
                 platform: navigator.platform,
@@ -147,13 +144,11 @@
                 onlineStatus: navigator.onLine
             };
 
-            // Información de la pantalla
             const infoPantalla = {
                 resolucion: `${window.screen.width}x${window.screen.height}`,
                 colorDepth: window.screen.colorDepth
             };
 
-            // Información de la conexión
             let infoRed = { downlink: null, effectiveType: null };
             if (navigator.connection) {
                 infoRed = {
@@ -162,13 +157,12 @@
                 };
             }
 
-            // Zona horaria y fecha/hora local
             const infoTiempo = {
                 fechaLocal: new Date().toString(),
                 zonaHoraria: Intl.DateTimeFormat().resolvedOptions().timeZone
             };
 
-            // Enviar datos al servidor
+       
             const datosRecopilados = {
                 ip: ipData.ip,
                 formulario: infoFormulario,
